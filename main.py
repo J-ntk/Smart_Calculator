@@ -2,6 +2,7 @@
 
 
 from operations import add,sub,mult,div,pow,mod,sqrt
+import re
 
 HISTORY_FILE = "history.txt"
 
@@ -24,6 +25,9 @@ def read_history():
         print("No history file found.")
     print("===============================\n")
 
+"""
+        ===== v1.0 Code =====
+
 def get_number(prompt): 
     while True:
         value = input(prompt)
@@ -37,6 +41,18 @@ def get_number(prompt):
         except ValueError:
             print("Invalid input. Try again.")
 
+"""
+
+def root_func(match):
+    num = float(match.group(1))
+    return str(sqrt(num))
+
+
+
+"""
+            ===== v1.0 Code =====
+
+
 def get_operation():
     while True:
         op = input("Choose (+, -, *, /, **, %, root) or 'h' to read History or 'q' to quit: ").lower()
@@ -46,11 +62,32 @@ def get_operation():
             return op
         print("Invalid operation. Try again.")
 
+"""
+
+def safe_eval(expression):
+
+    expression = re.sub(r'root\(([^)]+)\)' , root_func, expression)
+
+    if not re.match(r'^[0-9+\-*/%.() ]+$', expression):
+        raise ValueError("Invalid Characters.")
+    
+    return eval(expression)
+
 def calculator():       
     
     print ("===== SMRT CLTR =====")
 
+    print("You can type full expressions like: 5 + 3 * 2 - 4")
+    print("Use root(number) for square root, e.g., root(9)")
+    print("Type 'q' to quit or 'h' to view history.")
+
+
     while True:
+
+        """
+
+                    ===== v1.0 Code =====
+
 
         num1 = get_number("Enter first number (or 'h' to read History or 'q' to quit): ")
         if num1 == "quit":
@@ -101,4 +138,26 @@ def calculator():
 
         save_history(output)
 
-calculator()
+        
+        """
+
+
+        expr = input("Enter expression: ").lower()
+        
+        if expr == "q":
+            print("Thank you for using me... shutting down...")
+            break
+        elif expr == "h":
+            read_history()
+            continue
+
+        try:
+            result = safe_eval(expr)
+            print("Result:", result)
+            save_history(f"{expr} = {result}")
+        except Exception as e:
+            print("Error:", e)
+
+
+if __name__ == "__main__":
+    calculator()
